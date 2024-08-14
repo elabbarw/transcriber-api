@@ -10,6 +10,7 @@
     4. Go into the folder and run `cog build -t transcriber-api`
     5. Use Docker/Podman to run the container or write a compose to deploy it
 3. For Azure OpenAI Whisper API you can deploy as above without worrying about hardware.
+    1. create a .env file and add your credentials with the appropriate keys and use them in predict.py
 
 
 # The API expects the following optional inputs in JSON:

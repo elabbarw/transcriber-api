@@ -1,4 +1,5 @@
-# Azure OpenAI and On-prem (Whisperv3) ASR
+# Azure OpenAI and On-prem (Whisperv3 Insanely Fast Whisper) ASR
+## Presidio PII detection & removal is included
 
 ## For COG containers
 
@@ -18,6 +19,10 @@
 2. Language (optional)
 
 # You will get the following in JSON:
-{"text":transcript}
+{
+            "PII": transcribed text with pii redacted,
+            "NOPII": transcribed text with pii redacted,
+            "LANG": detected language if not specified
+}
     
 

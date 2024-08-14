@@ -20,7 +20,7 @@
 
 # You will get the following in JSON:
 {
-            "PII": transcribed text with pii redacted,
+            "PII": transcribed text as is,
             "NOPII": transcribed text with pii redacted,
             "LANG": detected language if not specified
 }

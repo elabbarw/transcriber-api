@@ -1,0 +1,19 @@
+# Configuration for Cog ⚙️
+# Reference: https://github.com/replicate/cog/blob/main/docs/yaml.md
+
+build:
+  gpu: false
+  system_packages:
+    - "ffmpeg"
+    - "ninja-build"
+  python_version: "3.11"
+  python_packages:
+    - "openai"
+    - "python-dotenv"
+    - "presidio-analyzer"
+    - "presidio-anonymizer"
+  run:
+    - command: pip install packaging
+
+predict: "predict.py:Predictor"
+

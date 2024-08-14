@@ -1,0 +1,55 @@
+#cloud-config
+package_upgrade: true
+packages:
+  - apt-transport-https
+  - ca-certificates
+  - curl
+  - software-properties-common
+  - gnupg-agent
+  - lsb-release
+  - git
+
+write_files:
+  - path: /etc/modprobe.d/blacklist-nouveau.conf
+    content: |
+      blacklist nouveau
+      options nouveau modeset=0
+  - path: /etc/systemd/system/swapfile.service
+    content: |
+      [Unit]
+      Description=Turn on swap
+
+      [Swap]
+      What=/swapfile
+
+      [Install]
+      WantedBy=multi-user.target
+
+runcmd:
+  - fallocate -l 16G /swapfile
+  - chmod 600 /swapfile
+  - mkswap /swapfile
+  - systemctl enable --now swapfile.service
+  # Install Docker
+  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+  - add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+  - apt-get update
+  - apt-get install -y docker-ce docker-ce-cli containerd.io
+  # Install Docker Compose
+  - curl -L "https://github.com/docker/compose/releases/download/v2.3.3/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+  - chmod +x /usr/local/bin/docker-compose
+  # Install Docker Buildx
+  - mkdir -p ~/.docker/cli-plugins/
+  - curl -L "https://github.com/docker/buildx/releases/download/v0.9.1/buildx-v0.9.1.$(uname -m)" -o ~/.docker/cli-plugins/docker-buildx
+  - chmod +x ~/.docker/cli-plugins/docker-buildx
+  # Install the COG Machine Learning Framework for Docker
+  - curl -o /usr/local/bin/cog -L "https://github.com/replicate/cog/releases/latest/download/cog_$(uname -s)_$(uname -m)"
+  - chmod +x /usr/local/bin/cog
+  # Clone a GitLab repo using an access token.
+  - git clone https://oauth2:$(transcriber_gitlab_token)@gitlab.ballys.tech/it/generativeai/transcriber-api.git /opt/transcriber-api
+  - cd /opt/transcriber-api/onprem/IFW && cog init && cog build -t transcriber
+  - docker run -d --restart=unless-stopped --name=transcriber -p 5000:5000 --gpus all transcriber
+power_state:
+  mode: reboot
+  timeout: 30
+  condition: True

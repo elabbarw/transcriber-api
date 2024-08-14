@@ -18,6 +18,8 @@
 1. Audio
 2. Language (optional)
 
+### The swagger can be found on /docs
+
 # You will get the following in JSON:
 {
             "PII": transcribed text as is,
